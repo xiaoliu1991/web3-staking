@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-import "./ZYB.sol";
+import "./STAToken.sol";
 
 contract Staking {
-    ZYB public stakingToken;
-    ZYB public rewardToken;
+    STAToken public stakingToken;
+    STAToken public rewardToken;
 
     uint256 public contractTotalShares; // 系统的总份额
     uint256 public contractTotalStaked; // 系统的总质押金额
@@ -20,8 +20,8 @@ contract Staking {
     event Withdrawn(address indexed user, uint256 amount);//提取事件
 
     constructor(
-        ZYB _stakingToken,
-        ZYB _rewardToken,
+        STAToken _stakingToken,
+        STAToken _rewardToken,
         uint256 _rewardPerSecond,
         uint256 _amount
     ) {

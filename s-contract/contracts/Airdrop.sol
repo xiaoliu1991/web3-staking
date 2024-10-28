@@ -7,33 +7,27 @@ import "hardhat/console.sol";
 contract Airdrop {
 
     IERC20 public airdropToken;
-    uint256 public totalTokensWithdrawn;
+    uint256 public totalTokenClaimed;
 
-    mapping (address => bool) public wasClaimed;
-    uint256 public constant TOKENS_PER_CLAIM = 100 * 10**18;
+    mapping (address => bool) public isClaimed;
+    uint256 public constant TOKENS_PER_CLAIM = 50 * 10**18;
 
-    event TokensAirdropped(address beneficiary);
+    event AirdropClaimed(address user);
 
-    // Constructor, initial setup
     constructor(address _airdropToken) public {
         require(_airdropToken != address(0));
         airdropToken = IERC20(_airdropToken);
     }
 
-    // Function to withdraw tokens.
-    function withdrawTokens() public {
-        require(msg.sender == tx.origin, "Require that message sender is tx-origin.");
-
-        address beneficiary = msg.sender;
-
-        require(!wasClaimed[beneficiary], "Already claimed!");
-        wasClaimed[msg.sender] = true;
+    function claimToken() public {
+        address user = msg.sender;
+        require(!isClaimed[user], "Already claimed!");
+        isClaimed[msg.sender] = true;
         
-        bool status = airdropToken.transfer(beneficiary, TOKENS_PER_CLAIM);
-        require(status, "Token transfer status is false.");
+        bool status = airdropToken.transfer(user, TOKENS_PER_CLAIM);
+        require(status, "Token transfer false.");
 
-        totalTokensWithdrawn = totalTokensWithdrawn + TOKENS_PER_CLAIM;
-        emit TokensAirdropped(beneficiary);
+        totalTokenClaimed = totalTokenClaimed + TOKENS_PER_CLAIM;
+        emit AirdropClaimed(user);
     }
-
 }

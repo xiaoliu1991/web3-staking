@@ -1,14 +1,21 @@
 import { useContext, useEffect } from "react";
-import { ConnectWallet } from "../wallet/ConnectWallet";
+import { WalletHandler } from "../wallet/WalletHandler";
 
 const Navbar = ()=>{
-    const {connectWallet,disconnectWallet,connectedAccount} = useContext(ConnectWallet);
+    const {connectWallet,disconnectWallet,connectedAccount,claimAirDrop} = useContext(WalletHandler);
 
     return (
         <nav className='w-full flex justify-between p-10'>
             <div className="text-white px-10 py-4">
                 Staking Reward
             </div>
+
+            <div className="text-white">
+                <button onClick={claimAirDrop} className="bg-[#2952e3] hover:bg-[#2546bd] px-10 py-3 rounded-full cursor-pointer">
+                    Airdrop
+                </button>
+            </div>
+
             <div className="text-white">
                 {(connectedAccount && 
                 <h1>

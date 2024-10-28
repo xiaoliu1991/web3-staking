@@ -1,10 +1,10 @@
 import { Navar,Staking,Services,Footer } from "./components";
-import { ConnectWalletProvider } from "./wallet/ConnectWallet";
+import { WalletHandlerProvider } from "./wallet/WalletHandler";
 
 
 const App = ()=>{
   return (
-  <ConnectWalletProvider>
+  <WalletHandlerProvider>
     <div className="min-h-screen">
       <div className="gradient-bg-welcome">
         <Navar />
@@ -13,7 +13,7 @@ const App = ()=>{
       <Services />
       <Footer />
     </div>
-  </ConnectWalletProvider>
+  </WalletHandlerProvider>
   );
 }
 

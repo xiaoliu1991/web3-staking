@@ -6,33 +6,39 @@ async function main() {
 
     console.log("Deploying contracts with the account:", deployer.address);
 
-    const rw = await ethers.getContractFactory("ZYB");
-    const RWToken = await rw.deploy("RW", "RW", ethers.parseEther("1000000"));
-    await RWToken.waitForDeployment();
-    console.log("RWToken deployed to: ", RWToken.target);
+    const sta = await ethers.getContractFactory("STAToken");
+    const STAToken = await sta.deploy("STA", "STA", ethers.parseEther("1000000"));
+    await STAToken.waitForDeployment();
+    console.log("STAToken deployed to: ", STAToken.target);
 
     const air = await ethers.getContractFactory("Airdrop");
-    const Air = await air.deploy(RWToken.target);
+    const Air = await air.deploy(STAToken.target);
     await Air.waitForDeployment();
     console.log("Air deployed to: ", Air.target);
 
+    const staking = await ethers.getContractFactory("Staking");
+    const Staking = await staking.deploy(STAToken.target,STAToken.target,ethers.parseEther("0.01"),0);//每秒0.01个
+    await Staking.waitForDeployment();
+    const perSecond = await Staking.stakeRewardPerSecond();
+    console.log("Staking deployed to: ", Staking.target,"stakeRewardPerSecond:", perSecond);
+
     //给空头账户转账1000个
-    let tx = await RWToken.transfer(Air.target, ethers.parseEther("10000"));
+    let tx = await STAToken.transfer(Air.target, ethers.parseEther("10000"));
     await tx.wait();
     //获取空头账户token数量
-    const balance = await RWToken.balanceOf(Air.target);
-    console.log("Airdrop balance of RWToken: ", ethers.formatEther(balance));
+    const balance = await STAToken.balanceOf(Air.target);
+    console.log("Airdrop balance of STAToken: ", ethers.formatEther(balance));
     //获取空头领取账户token数量
-    const balanceGetter = await RWToken.balanceOf(getter);
+    const balanceGetter = await STAToken.balanceOf(getter);
     console.log("balanceGetter: ", ethers.formatEther(balanceGetter));
     //测试使用getter领取空头
-    tx = await Air.connect(getter).withdrawTokens();
+    tx = await Air.connect(getter).claimToken();
     await tx.wait();
     //获取空头账户token数量
-    const balanceAfter = await RWToken.balanceOf(Air.target);
-    console.log("Airdrop balance of RWToken after withdrawTokens: ", ethers.formatEther(balanceAfter));
+    const balanceAfter = await STAToken.balanceOf(Air.target);
+    console.log("Airdrop balance of STAToken after claimToken: ", ethers.formatEther(balanceAfter));
     //获取空头领取账户token数量
-    const balanceGetterAfter = await RWToken.balanceOf(getter);
+    const balanceGetterAfter = await STAToken.balanceOf(getter);
     console.log("balanceGetterAfter: ", ethers.formatEther(balanceGetterAfter));
 }
 
