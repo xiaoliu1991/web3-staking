@@ -31,9 +31,13 @@ async function main() {
     //获取空头领取账户token数量
     const balanceGetter = await STAToken.balanceOf(getter);
     console.log("balanceGetter: ", ethers.formatEther(balanceGetter));
+    let isClaimed = await Air.isClaimed(getter.address);
+    console.log("Airdrop getter is claimed :",isClaimed);
     //测试使用getter领取空头
     tx = await Air.connect(getter).claimToken();
     await tx.wait();
+    isClaimed = await Air.isClaimed(getter.address);
+    console.log("Airdrop getter is claimed :",isClaimed);
     //获取空头账户token数量
     const balanceAfter = await STAToken.balanceOf(Air.target);
     console.log("Airdrop balance of STAToken after claimToken: ", ethers.formatEther(balanceAfter));
