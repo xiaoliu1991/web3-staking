@@ -17,7 +17,7 @@ const Input = ({ placeholder,value,onValueChange}) => (
 
 const Staking = ()=>{
     const {stakingTotal,userStakingTotal,userSTATokenBalancen,
-           userStakingReward,userShare,refreshUserData,
+           userStakingReward,userShare,refreshUserData,refreshStakingReward,
            claimStakingReward,executeStaking,withdrawStaking} = useContext(WalletHandler);
     const [stakingValue,setStakingValue] = useState(0);
 
@@ -34,7 +34,7 @@ const Staking = ()=>{
                     <div className={companyCommonStyles}>
                         <button onClick={refreshUserData} className="bg-[#2952e3] hover:bg-[#6278C6] px-5 py-2 rounded-full cursor-pointer">
                         刷新
-                        </button>
+                        </button>  
                     </div>
 
                     <div className={companyCommonStyles}>当前质押总量</div>
@@ -44,9 +44,11 @@ const Staking = ()=>{
                     <div className={companyCommonStyles}>质押量</div>
                     <div className={companyCommonStyles}>{userStakingTotal} STA</div>
                     <div className={companyCommonStyles}>
-                        <button onClick={withdrawStaking} className="bg-[#2952e3] hover:bg-[#6278C6] px-5 py-2 rounded-full cursor-pointer">
-                        取出
-                        </button>
+                        {(userStakingTotal > 0 &&
+                            <button onClick={withdrawStaking} className="bg-[#2952e3] hover:bg-[#6278C6] px-5 py-2 rounded-full cursor-pointer">
+                            取出本金和奖励
+                            </button>
+                        )}
                     </div>
 
                     <div className={companyCommonStyles}>所占份额</div>
@@ -55,10 +57,15 @@ const Staking = ()=>{
 
                     <div className={companyCommonStyles}>收益</div>
                     <div className={companyCommonStyles}>{userStakingReward} STA</div>
-                    <div className={companyCommonStyles}>  
-                        <button onClick={claimStakingReward} className="bg-[#2952e3] hover:bg-[#6278C6] px-5 py-2 rounded-full cursor-pointer">
-                        领取
+                    <div className={`${companyCommonStyles}`}>
+                        <button onClick={refreshStakingReward} className="bg-[#2952e3] hover:bg-[#6278C6] px-5 py-2 mx-2 rounded-full cursor-pointer">
+                        刷新收益
                         </button>
+                        {(userStakingTotal > 0 &&
+                            <button onClick={claimStakingReward} className="bg-[#2952e3] hover:bg-[#6278C6] px-5 py-2 rounded-full cursor-pointer">
+                            领取
+                            </button>
+                        )}
                     </div>
                     <div className={companyCommonStyles}>质押</div>
                     <div className="sm:w-60 white-glassmorphism">

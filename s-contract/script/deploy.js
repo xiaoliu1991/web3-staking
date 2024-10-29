@@ -4,10 +4,8 @@ async function main() {
 
     const [deployer,getter] = await ethers.getSigners();
 
-    console.log("Deploying contracts with the account:", deployer.address);
-
     const sta = await ethers.getContractFactory("STAToken");
-    const STAToken = await sta.deploy("STA", "STA", ethers.parseEther("1000000"));
+    const STAToken = await sta.deploy("STA", "STA", ethers.parseEther("1010000"));
     await STAToken.waitForDeployment();
     console.log("STAToken deployed to: ", STAToken.target);
 
@@ -19,17 +17,32 @@ async function main() {
     const staking = await ethers.getContractFactory("Staking");
     const Staking = await staking.deploy(STAToken.target,STAToken.target,ethers.parseEther("0.01"),0);//每秒0.01个
     await Staking.waitForDeployment();
-    const perSecond = await Staking.stakeRewardPerSecond();
-    console.log("Staking deployed to: ", Staking.target,"stakeRewardPerSecond:", perSecond);
+    console.log("Staking deployed to: ", Staking.target);
+
+    //获取部署账户token数量
+    let deployBalance = await STAToken.balanceOf(deployer.address);
+    console.log("Deploy balance of STAToken: ", ethers.formatEther(deployBalance));
 
     //给空头账户转账1000个
     let tx = await STAToken.transfer(Air.target, ethers.parseEther("10000"));
     await tx.wait();
-    //获取空头账户token数量
+
+    //给质押账户转账1000000个
+    tx = await STAToken.transfer(Staking.target, ethers.parseEther("1000000"));
+    await tx.wait();
+
+    //获取部署账户token数量
+    deployBalance = await STAToken.balanceOf(deployer.address);
+    console.log("Deploy balance of STAToken: ", ethers.formatEther(deployBalance));
+
+    //获取空头合约账户token数量
     const balance = await STAToken.balanceOf(Air.target);
     console.log("Airdrop balance of STAToken: ", ethers.formatEther(balance));
+    //获取质押合约账户token数量
+    const stakingBalance = await STAToken.balanceOf(Staking.target)
+    console.log("Staking balance of STAToken: ", ethers.formatEther(stakingBalance));
 
-    let isClaimed = false;
+    // let isClaimed = false;
     // console.log("Airdrop getter with the account:", getter.address);
     // //获取空头领取账户token数量
     // const balanceGetter = await STAToken.balanceOf(getter);
@@ -48,14 +61,12 @@ async function main() {
     // const balanceGetterAfter = await STAToken.balanceOf(getter);
     // console.log("balanceGetterAfter: ", ethers.formatEther(balanceGetterAfter));
 
-    isClaimed = await Air.checkIsClaim("0x90F79bf6EB2c4f870365E785982E1f101E93b906");
-    console.log("Airdrop getter is claimed :",isClaimed);
-
+    // isClaimed = await Air.checkIsClaim("0x90F79bf6EB2c4f870365E785982E1f101E93b906");
+    // console.log("Airdrop getter is claimed :",isClaimed);
     
-    await STAToken.approve(Staking.target,ethers.parseEther("100000"));
-
-    await Staking.stake(ethers.parseEther("100"));
-    console.log("Staking : ", await Staking.userStaked(deployer.address));
+    // await STAToken.approve(Staking.target,ethers.parseEther("100000"));
+    // await Staking.stake(ethers.parseEther("100"));
+    // console.log("Staking : ", await Staking.userStaked(deployer.address));
 
 }
 

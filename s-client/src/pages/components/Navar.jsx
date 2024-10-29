@@ -23,14 +23,14 @@ const Navbar = ()=>{
                     {shortenAddress(connectedAccount)} 
                     &nbsp;&nbsp;
                     {(connectedAccount && 
-                    <button className="bg-[#2952e3] hover:bg-[#2546bd] px-5 py-1 rounded-full cursor-pointer" onClick={disconnectWallet}>断开链接</button>
+                    <button className="bg-[#2952e3] hover:bg-[#2546bd] px-5 py-3 rounded-full cursor-pointer" onClick={disconnectWallet}>断开链接</button>
                     )}
                 </h1>
                 )}
                
 
                 {(!connectedAccount && 
-                <button onClick={connectWallet} className="bg-[#2952e3] hover:bg-[#2546bd] px-20 py-3 rounded-full cursor-pointer">
+                <button onClick={connectWallet} className="bg-[#2952e3] hover:bg-[#2546bd] px-10 py-3 rounded-full cursor-pointer">
                     Connect Wallet
                 </button>)}
             </div>

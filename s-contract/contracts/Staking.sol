@@ -2,6 +2,7 @@
 pragma solidity ^0.8.26;
 
 import "./STAToken.sol";
+import "hardhat/console.sol";
 
 contract Staking {
     STAToken public stakingToken;
@@ -14,8 +15,10 @@ contract Staking {
     mapping(address => uint256) public userShares; // 每个用户的份额
     mapping(address => uint256) public userStaked; // 每个用户的质押金额
     mapping(address => uint256) public userStakedStartTime;//每个用户开始质押的时间
+    mapping(address => uint256) public userRewards; //玩家每次请求计算奖励后的存的数据,用户显示
 
     event Staked(address indexed user, uint256 amount);//质押事件
+    event RewardUpdate(address indexed user, uint256 amount);//奖励更新事件
     event ClaimReward(address indexed user, uint256 amount);//领取奖励事件
     event Withdrawn(address indexed user, uint256 amount);//提取事件
 
@@ -55,6 +58,8 @@ contract Staking {
         stakingToken.transferFrom(msg.sender, address(this), amount);//把质押的token转到当前合约
 
         emit Staked(msg.sender,amount);
+
+        calculateReward(msg.sender);
     }
 
     //计算用户的可领取奖励
@@ -65,32 +70,34 @@ contract Staking {
 
         //质押时长
         uint256 duration = block.timestamp - userStakedStartTime[user];
-        if(duration == 0)
-        {
-            return 0;
-        }
         // 根据用户的份额占比，计算其可领取的奖励
         uint256 userSharePercentage = (userShares[user] * 1e18) / contractTotalShares;
-        uint256 rewardAmount = (rewardToken.balanceOf(address(this)) * userSharePercentage) / 1e18; //份额奖励
+        uint256 rewardAmount = ((1e18/contractTotalStaked) * userSharePercentage) / 1e18; //份额奖励
         uint256 durationRewardAmount = duration * stakeRewardPerSecond; //时长奖励
         uint256 totalReward = rewardAmount + durationRewardAmount;
+        emit RewardUpdate(user,totalReward);
+        userRewards[user] = totalReward;
         return totalReward;
     }
 
     //用户领取质押奖励
     function claimReward() public {
+        console.log(msg.sender);
         require(userStaked[msg.sender] >= 0, "Insufficient staked amount");
         //发奖
         uint256 reward = calculateReward(msg.sender);
         userStakedStartTime[msg.sender] = block.timestamp;
         rewardToken.transfer(msg.sender, reward);
         emit ClaimReward(msg.sender,reward);
+
+        calculateReward(msg.sender);
     }
 
 
 
     //用户提取质押金额和奖励
     function withdraw(uint256 amount) external {
+        console.log(msg.sender);
         require(amount > 0 ,"amount must be greater than 0");
         require(userStaked[msg.sender] >= amount, "Insufficient staked amount");
 
@@ -108,5 +115,11 @@ contract Staking {
 
         stakingToken.transfer(msg.sender, amount);
         emit Withdrawn(msg.sender, amount);
+
+        if(userStaked[msg.sender] > 0){
+            calculateReward(msg.sender);
+        }else{
+            userRewards[msg.sender] = 0;
+        }
     }
 }
