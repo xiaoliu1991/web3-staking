@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react";
 import { WalletHandler } from "../wallet/WalletHandler";
+import { shortenAddress } from "@/utils/shortenAddress";
 
 const Navbar = ()=>{
     const {connectWallet,disconnectWallet,connectedAccount,claimAirDrop} = useContext(WalletHandler);
@@ -19,7 +20,7 @@ const Navbar = ()=>{
             <div className="text-white">
                 {(connectedAccount && 
                 <h1>
-                    {connectedAccount} 
+                    {shortenAddress(connectedAccount)} 
                     &nbsp;&nbsp;
                     {(connectedAccount && 
                     <button className="bg-[#2952e3] hover:bg-[#2546bd] px-5 py-1 rounded-full cursor-pointer" onClick={disconnectWallet}>断开链接</button>

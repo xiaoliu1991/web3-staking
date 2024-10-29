@@ -9,7 +9,7 @@ contract Airdrop {
     IERC20 public airdropToken;
     uint256 public totalTokenClaimed;
 
-    mapping (address => bool) public isClaimed;
+    mapping (address => bool) private isClaimed;
     uint256 public constant TOKENS_PER_CLAIM = 50 * 10**18;
 
     event AirdropClaimed(address user);
@@ -17,6 +17,10 @@ contract Airdrop {
     constructor(address _airdropToken) public {
         require(_airdropToken != address(0));
         airdropToken = IERC20(_airdropToken);
+    }
+
+    function checkIsClaim(address user) external view returns(bool){
+        return isClaimed[user];
     }
 
     function claimToken() public {

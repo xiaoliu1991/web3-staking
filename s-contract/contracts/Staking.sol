@@ -69,7 +69,6 @@ contract Staking {
         {
             return 0;
         }
-        userStakedStartTime[user] = block.timestamp;
         // 根据用户的份额占比，计算其可领取的奖励
         uint256 userSharePercentage = (userShares[user] * 1e18) / contractTotalShares;
         uint256 rewardAmount = (rewardToken.balanceOf(address(this)) * userSharePercentage) / 1e18; //份额奖励
@@ -83,6 +82,7 @@ contract Staking {
         require(userStaked[msg.sender] >= 0, "Insufficient staked amount");
         //发奖
         uint256 reward = calculateReward(msg.sender);
+        userStakedStartTime[msg.sender] = block.timestamp;
         rewardToken.transfer(msg.sender, reward);
         emit ClaimReward(msg.sender,reward);
     }
