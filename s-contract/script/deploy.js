@@ -15,7 +15,7 @@ async function main() {
     console.log("Air deployed to: ", Air.target);
 
     const staking = await ethers.getContractFactory("Staking");
-    const Staking = await staking.deploy(STAToken.target,STAToken.target,ethers.parseEther("0.01"),0);//每秒0.01个
+    const Staking = await staking.deploy(STAToken.target,STAToken.target,ethers.parseEther("0.0001"),0);//每秒0.0001个
     await Staking.waitForDeployment();
     console.log("Staking deployed to: ", Staking.target);
 
