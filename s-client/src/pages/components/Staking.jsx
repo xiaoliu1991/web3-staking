@@ -17,8 +17,9 @@ const Input = ({ placeholder,value,onValueChange}) => (
 
 const Staking = ()=>{
     const {stakingTotal,userStakingTotal,userSTATokenBalancen,
-           userStakingReward,userShare,refreshUserData,refreshStakingReward,
-           claimStakingReward,executeStaking,withdrawStaking} = useContext(WalletHandler);
+           userStakingReward,stakeRewardPerSecond,userShare,
+           refreshUserData,refreshStakingReward,claimStakingReward,
+           executeStaking,withdrawStaking} = useContext(WalletHandler);
     const [stakingValue,setStakingValue] = useState(0);
 
     return (
@@ -53,6 +54,10 @@ const Staking = ()=>{
 
                     <div className={companyCommonStyles}>所占份额</div>
                     <div className={companyCommonStyles}>{userShare}</div>
+                    <div className={companyCommonStyles}></div>
+
+                    <div className={companyCommonStyles}>每秒奖励</div>
+                    <div className={companyCommonStyles}>{stakeRewardPerSecond}/s STA</div>
                     <div className={companyCommonStyles}></div>
 
                     <div className={companyCommonStyles}>收益</div>

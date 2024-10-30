@@ -24,6 +24,7 @@ export const WalletHandlerProvider = ({children})=>{
     const[userSTATokenBalancen,setUserSTATokenBalancen] = useState(0);
     const[userStakingTotal,setUserStakingTotal] = useState(0);
     const[userStakingReward,setUserStakingReward] = useState(0);
+    const[stakeRewardPerSecond,setStakeRewardPerSecond] = useState(0);
     const[userShare,setUserShare] = useState("0.00%");
     const[isRefreshUserData,setRefreshUserData] = useState(false);
 
@@ -134,6 +135,10 @@ export const WalletHandlerProvider = ({children})=>{
             const totalStaked = await contract.contractTotalStaked();
             console.log("contractTotalStaked: ",ethers.formatEther(totalStaked));
             setStakingTotal(ethers.formatEther(totalStaked));
+
+            v = await contract.stakeRewardPerSecond();
+            console.log("contractTotalStaked: ",ethers.formatEther(v));
+            setStakeRewardPerSecond(ethers.formatEther(v));
 
             v = await contract.userShares(connectedAccount);
             console.log("userShares: ",ethers.formatEther(v));
@@ -264,6 +269,7 @@ export const WalletHandlerProvider = ({children})=>{
             userStakingTotal,
             userSTATokenBalancen,
             userStakingReward,
+            stakeRewardPerSecond,
             userShare,
             refreshUserData,
             refreshStakingReward,
